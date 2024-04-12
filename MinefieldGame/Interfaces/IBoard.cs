@@ -1,8 +1,5 @@
-﻿namespace MinefieldGame.Domain
+﻿namespace MinefieldGame.Interfaces
 {
-    /// <summary>
-    /// The contract for a game board
-    /// </summary>
     public interface IBoard
     {
         /// <summary>
@@ -25,5 +22,14 @@
         /// <param name="file"></param>
         /// <returns></returns>
         string Position(int rank, int file);
+
+        /// <summary>
+        /// Generate a collection of random positions on the board
+        /// avoiding the specidied number
+        /// </summary>
+        /// <param name="quantity"></param>
+        /// <param name="avoidPosition"></param>
+        /// <returns></returns>
+        string[] RandomPositions(int quantity, string avoidPosition);
     }
 }

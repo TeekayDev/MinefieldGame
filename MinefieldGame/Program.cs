@@ -1,5 +1,6 @@
 ﻿using MinefieldGame.Core;
 using MinefieldGame.Domain;
+using MinefieldGame.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +14,25 @@ namespace MinefieldGame
     {
         static void Main(string[] args)
         {
-            int initialLives = 3;
-            string[] minePositions = { "E6", "B1", "C4" };
+            /// Idealy or alternatively the parameters passed for number of mines and lives
+            /// could be stored and read from an app settings file
+            /// or passed in as input paramerets.
+            try
+            {
+                var mine = new Mine(Constants.NumberOfMines);
+                var outputManager = new OutputManager();
+                var player = new Player(Constants.NumberOfLives);
+                var board = new ChessBoardForMineSweeper(mine);
 
-            var board = new Board();
-            var player = new Player(initialLives);
-            var mine = new Mine(minePositions);
-            var outputManager = new OutputManager();
+                var gameEngine = new GameEngine(board, player, outputManager);
+                gameEngine.Run();
 
-            var gameEngine = new GameEngine(board, player, mine, outputManager);
-            gameEngine.Run();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
-
     }
 }

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MinefieldGame.Interfaces;
+using System;
 
-namespace MinefieldGame.Core
+
+namespace MinefieldGame.Domain
 {
     /// <summary>
-    /// Displays positions and generic messages to an screen
+    /// Displays _positions and generic messages to an screen
     /// </summary>
     public class OutputManager : IOutputManager
     {

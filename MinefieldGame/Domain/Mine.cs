@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinefieldGame.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,29 @@ namespace MinefieldGame.Domain
 {
     public class Mine : IMine
     {
-        private readonly string[] positions;
+        private int _quantity;
 
-        public Mine(string[] positions)
+        /// <inheritdoc>
+        private List<string> _positions = new List<string>();
+
+        public int Quantity
         {
-            this.positions = positions;
+            get { return _quantity; }
+        }
+        public List<string> Positions
+        {
+            get { return _positions; }
+            set { _positions = value; }
+        }
+
+        public Mine(int quantity)
+        {
+            _quantity = quantity;
         }
 
         public bool IsMine(string position)
         {
-            return positions.Contains(position);
+            return _positions.Contains(position);
         }
     }
 }

@@ -1,66 +1,106 @@
 ﻿using MinefieldGame.Domain;
+using MinefieldGame.Helpers;
+using MinefieldGame.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MinefieldGame.Core
 {
 
+    /// <summary>
+    /// This is the core of the application which runs the game
+    /// </summary>
     public class GameEngine : IGameEngine
     {
-        private readonly Board board;
+        private int column;
+
+        private readonly ChessBoardForMineSweeper board;
         private readonly Player player;
-        private readonly Mine mine;
         private readonly OutputManager outputManager;
 
-        public GameEngine(Board board, Player player, Mine mine, OutputManager outputManager)
+        public GameEngine(ChessBoardForMineSweeper board, Player player, OutputManager outputManager)
         {
             this.board = board;
             this.player = player;
-            this.mine = mine;
             this.outputManager = outputManager;
         }
 
+        /// <summary>
+        /// Run the game engine
+        /// </summary>
         public void Run()
         {
-            int rankLabel = new Random().Next(1, board.Size);
-            int filePosition = 1;
-            string posName = PositionName(rankLabel, filePosition);
+            DisplayInstructions(board.CurrentPosition());
 
-            outputManager.DisplayMessage("Press arrow keys to move (Press 'q' to quit):");
-            outputManager.DisplayMessage($"You are currently at position: {posName}");
-
-            while (player.LivesRemaining > 0 && filePosition < board.Size)
+            while (player.LivesRemaining > 0 && !board.IsEndPosition)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 player.IncrementMoves();
 
-                if (keyInfo.Key == ConsoleKey.UpArrow && board.IsWithinBounds(rankLabel + 1, filePosition))
-                    rankLabel++;
-                else if (keyInfo.Key == ConsoleKey.DownArrow && board.IsWithinBounds(rankLabel - 1, filePosition))
-                    rankLabel--;
-                else if (keyInfo.Key == ConsoleKey.LeftArrow && board.IsWithinBounds(rankLabel, filePosition - 1))
-                    filePosition--;
-                else if (keyInfo.Key == ConsoleKey.RightArrow && board.IsWithinBounds(rankLabel, filePosition + 1))
-                    filePosition++;
-                else if (keyInfo.Key == ConsoleKey.Q)
+                // A factory approach would be more ideal for expansion
+                // this is a quick implementation due to time constraints
+                // and for simplicity of the requirement
+                switch (keyInfo.Key)
                 {
-                    outputManager.DisplayMessage("Exiting...");
-                    break;
+                    case ConsoleKey.UpArrow:
+                        board.MoveUp();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        board.MoveDown();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        board.MoveLeft();
+                        break;
+                    case ConsoleKey.RightArrow:
+                        board.MoveRight();
+                        break;
+                    case ConsoleKey.Q:
+                        break;
                 }
-
-                bool mineHit = CheckMineHit(posName);
-                outputManager.DisplayPosition(posName, player.LivesRemaining, player.TotalMovesTaken, mineHit);
+                DisplayCurrentStatus();
             }
 
-            DisplayFinalScore(filePosition);
+            DisplayFinalScore(column);
         }
 
+        /// <summary>
+        /// Display introductry instruction to the user.
+        /// </summary>
+        /// <param name="startingPositionName"></param>
+        private void DisplayInstructions(string startingPositionName)
+        {
+            outputManager.DisplayMessage(Messages.GameInstructions);
+            outputManager.DisplayMessage($"You are currently at position: {startingPositionName}");
+        }
+
+        /// <summary>
+        /// Display the current in-play positions, lives remaining and moves so far taken.
+        /// </summary>
+        private void DisplayCurrentStatus()
+        {
+            var newposition = board.CurrentPosition();
+            bool mineHit = CheckMineHit(newposition);
+            outputManager.DisplayPosition(newposition, player.LivesRemaining, player.TotalMovesTaken, mineHit);
+        }
+
+        /// <summary>
+        /// Updates the appropriate counters and resulting position 
+        /// based on input from the user (aka player).
+        /// </summary>
+        /// <param name="keyInfo"></param>
+        private void UpdatePosition(ConsoleKeyInfo keyInfo)
+        {
+
+        }
+
+        /// <summary>
+        /// Check and track if the resulting new position contains a mine.
+        /// </summary>
+        /// <param name="newPosition"></param>
+        /// <returns></returns>
         private bool CheckMineHit(string newPosition)
         {
-            if (mine.IsMine(newPosition))
+            if (board.Mines.IsMine(newPosition))
             {
                 player.DecrementLives();
                 return true;
@@ -68,21 +108,24 @@ namespace MinefieldGame.Core
             return false;
         }
 
-        private string PositionName(int rankLabel, int filePosition)
-        {
-            return $"{((char)(filePosition + 96)).ToString().ToUpper()}{rankLabel}";
-        }
-
+        /// <summary>
+        /// Displays the end of game data and result.
+        /// </summary>
+        /// <param name="filePosition"></param>
         private void DisplayFinalScore(int filePosition)
         {
-            if (player.LivesRemaining > 0 && filePosition == board.Size)
+            outputManager.DisplayMessage(string.Empty);
+            outputManager.DisplayMessage(string.Empty);
+
+            if (player.LivesRemaining > 0 && board.IsEndPosition)
             {
-                outputManager.DisplayMessage($"Congratulations! Final score is Number of moves taken: {player.TotalMovesTaken}");
+                outputManager.DisplayMessage($"{Messages.OfCongratulations} {player.TotalMovesTaken}");
             }
             else
             {
-                outputManager.DisplayMessage($"Sorry, you did not reach the other side of the board.");
+                outputManager.DisplayMessage(Messages.OfCommiseration);
             }
+            outputManager.DisplayMessage(string.Empty);
         }
     }
 }
