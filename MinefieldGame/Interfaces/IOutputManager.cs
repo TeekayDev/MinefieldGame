@@ -1,7 +1,7 @@
 ﻿namespace MinefieldGame.Core
 {
     /// <summary>
-    /// Contract for displaying positions and generic messages to an output medium
+    /// Contract for displaying _positions and generic messages to an output medium
     /// </summary>
     public interface IOutputManager
     {

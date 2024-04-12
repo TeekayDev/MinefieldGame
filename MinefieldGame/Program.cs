@@ -13,13 +13,14 @@ namespace MinefieldGame
     {
         static void Main(string[] args)
         {
-            int initialLives = 3;
-            string[] minePositions = { "E6", "B1", "C4" };
-
+            
+            /// Idealy or alternatively the parameters passed for number of mines and lives
+            /// could be in the app settings.
+            
             var board = new Board();
-            var player = new Player(initialLives);
-            var mine = new Mine(minePositions);
             var outputManager = new OutputManager();
+            var mine = new Mine(Constants.NumberOfMines);
+            var player = new Player(Constants.NumberOfLives);
 
             var gameEngine = new GameEngine(board, player, mine, outputManager);
             gameEngine.Run();

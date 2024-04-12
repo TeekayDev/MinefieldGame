@@ -44,14 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\GameEngine.cs" />
+    <Compile Include="Interfaces\IMine.cs" />
+    <Compile Include="Interfaces\IBoard.cs" />
     <Compile Include="Interfaces\IGameEngine.cs" />
     <Compile Include="Interfaces\IOutputManager.cs" />
     <Compile Include="Domain\OutputManager.cs" />
     <Compile Include="Domain\Board.cs" />
     <Compile Include="Domain\Constants.cs" />
-    <Compile Include="Interfaces\IMine.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
-    <Compile Include="Interfaces\IBoard.cs" />
     <Compile Include="Domain\Mine.cs" />
     <Compile Include="Domain\Player.cs" />
     <Compile Include="Program.cs" />

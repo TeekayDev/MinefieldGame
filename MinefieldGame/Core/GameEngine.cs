@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 namespace MinefieldGame.Core
 {
 
+    /// <summary>
+    /// This is the core of the application which runs the game
+    /// </summary>
     public class GameEngine : IGameEngine
     {
+        private int row;
+        private int column;
+
         private readonly Board board;
         private readonly Player player;
         private readonly Mine mine;
@@ -25,37 +31,67 @@ namespace MinefieldGame.Core
 
         public void Run()
         {
-            int rankLabel = new Random().Next(1, board.Size);
-            int filePosition = 1;
-            string posName = PositionName(rankLabel, filePosition);
+            column = 1;
+            row = new Random().Next(1, board.Size);
+            string startingPositionName = board.Position(row, column);
 
-            outputManager.DisplayMessage("Press arrow keys to move (Press 'q' to quit):");
-            outputManager.DisplayMessage($"You are currently at position: {posName}");
+            mine.Positions = board.RandomPositions(3, startingPositionName);
+            DisplayInstructions(startingPositionName);
 
-            while (player.LivesRemaining > 0 && filePosition < board.Size)
+            while (player.LivesRemaining > 0 && column < board.Size)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 player.IncrementMoves();
 
-                if (keyInfo.Key == ConsoleKey.UpArrow && board.IsWithinBounds(rankLabel + 1, filePosition))
-                    rankLabel++;
-                else if (keyInfo.Key == ConsoleKey.DownArrow && board.IsWithinBounds(rankLabel - 1, filePosition))
-                    rankLabel--;
-                else if (keyInfo.Key == ConsoleKey.LeftArrow && board.IsWithinBounds(rankLabel, filePosition - 1))
-                    filePosition--;
-                else if (keyInfo.Key == ConsoleKey.RightArrow && board.IsWithinBounds(rankLabel, filePosition + 1))
-                    filePosition++;
-                else if (keyInfo.Key == ConsoleKey.Q)
+                if (keyInfo.Key == ConsoleKey.Q)
                 {
-                    outputManager.DisplayMessage("Exiting...");
                     break;
                 }
+                else
+                {
+                    UpdatePosition(keyInfo);
+                }
 
-                bool mineHit = CheckMineHit(posName);
-                outputManager.DisplayPosition(posName, player.LivesRemaining, player.TotalMovesTaken, mineHit);
+                DisplayCurrentStatus();
             }
 
-            DisplayFinalScore(filePosition);
+            DisplayFinalScore(column);
+        }
+
+        private void DisplayInstructions(string startingPositionName)
+        {
+            outputManager.DisplayMessage("Press arrow keys to move (Press 'q' to quit):");
+            outputManager.DisplayMessage($"You are currently at position: {startingPositionName}");
+        }
+
+        private void DisplayCurrentStatus()
+        {
+            var newposition = board.Position(row, column);
+            bool mineHit = CheckMineHit(newposition);
+            outputManager.DisplayPosition(newposition, player.LivesRemaining, player.TotalMovesTaken, mineHit);
+        }
+
+        private void UpdatePosition(ConsoleKeyInfo keyInfo)
+        {
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (board.IsWithinBounds(row + 1, column))
+                        row++;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (board.IsWithinBounds(row - 1, column))
+                        row--;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (board.IsWithinBounds(row, column - 1))
+                        column--;
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (board.IsWithinBounds(row, column + 1))
+                        column++;
+                    break;
+            }
         }
 
         private bool CheckMineHit(string newPosition)
@@ -66,15 +102,13 @@ namespace MinefieldGame.Core
                 return true;
             }
             return false;
-        }
-
-        private string PositionName(int rankLabel, int filePosition)
-        {
-            return $"{((char)(filePosition + 96)).ToString().ToUpper()}{rankLabel}";
-        }
+        }        
 
         private void DisplayFinalScore(int filePosition)
         {
+            outputManager.DisplayMessage("");
+            outputManager.DisplayMessage("");
+
             if (player.LivesRemaining > 0 && filePosition == board.Size)
             {
                 outputManager.DisplayMessage($"Congratulations! Final score is Number of moves taken: {player.TotalMovesTaken}");
@@ -83,6 +117,8 @@ namespace MinefieldGame.Core
             {
                 outputManager.DisplayMessage($"Sorry, you did not reach the other side of the board.");
             }
+            outputManager.DisplayMessage("");
+
         }
     }
 }

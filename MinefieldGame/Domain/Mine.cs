@@ -8,16 +8,29 @@ namespace MinefieldGame.Domain
 {
     public class Mine : IMine
     {
-        private readonly string[] positions;
+        private int _quantity;
 
-        public Mine(string[] positions)
+        /// <inheritdoc>
+        private string[] _positions;
+
+        public int Quantity
         {
-            this.positions = positions;
+            get { return _quantity; }
+        }
+        public string[] Positions
+        {
+            get { return _positions; }
+            set { _positions = value; }
+        }
+
+        public Mine(int quantity)
+        {
+            _quantity = quantity;
         }
 
         public bool IsMine(string position)
         {
-            return positions.Contains(position);
+            return _positions.Contains(position);
         }
     }
 }

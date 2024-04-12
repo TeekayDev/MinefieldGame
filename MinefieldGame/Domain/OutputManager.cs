@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MinefieldGame.Core
 {
     /// <summary>
-    /// Displays positions and generic messages to an screen
+    /// Displays _positions and generic messages to an screen
     /// </summary>
     public class OutputManager : IOutputManager
     {
