@@ -1,4 +1,6 @@
-﻿namespace MinefieldGame.Domain
+﻿using System.Collections.Generic;
+
+namespace MinefieldGame.Interfaces
 {
     public interface IMine
     {
@@ -11,7 +13,7 @@
         /// <summary>
         /// Returns the location of mines.
         /// </summary>
-        string[] Positions { get; }
+        List<string>  Positions { get; }
 
         /// <summary>
         /// Indicates a mine is at a given location.

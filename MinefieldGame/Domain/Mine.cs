@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinefieldGame.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +12,13 @@ namespace MinefieldGame.Domain
         private int _quantity;
 
         /// <inheritdoc>
-        private string[] _positions;
+        private List<string> _positions = new List<string>();
 
         public int Quantity
         {
             get { return _quantity; }
         }
-        public string[] Positions
+        public List<string> Positions
         {
             get { return _positions; }
             set { _positions = value; }

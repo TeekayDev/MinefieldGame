@@ -1,9 +1,8 @@
 ﻿using MinefieldGame.Domain;
+using MinefieldGame.Helpers;
+using MinefieldGame.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MinefieldGame.Core
 {
@@ -13,112 +12,120 @@ namespace MinefieldGame.Core
     /// </summary>
     public class GameEngine : IGameEngine
     {
-        private int row;
         private int column;
 
-        private readonly Board board;
+        private readonly ChessBoardForMineSweeper board;
         private readonly Player player;
-        private readonly Mine mine;
         private readonly OutputManager outputManager;
 
-        public GameEngine(Board board, Player player, Mine mine, OutputManager outputManager)
+        public GameEngine(ChessBoardForMineSweeper board, Player player, OutputManager outputManager)
         {
             this.board = board;
             this.player = player;
-            this.mine = mine;
             this.outputManager = outputManager;
         }
 
+        /// <summary>
+        /// Run the game engine
+        /// </summary>
         public void Run()
         {
-            column = 1;
-            row = new Random().Next(1, board.Size);
-            string startingPositionName = board.Position(row, column);
+            DisplayInstructions(board.CurrentPosition());
 
-            mine.Positions = board.RandomPositions(3, startingPositionName);
-            DisplayInstructions(startingPositionName);
-
-            while (player.LivesRemaining > 0 && column < board.Size)
+            while (player.LivesRemaining > 0 && !board.IsEndPosition)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                 player.IncrementMoves();
 
-                if (keyInfo.Key == ConsoleKey.Q)
+                // A factory approach would be more ideal for expansion
+                // this is a quick implementation due to time constraints
+                // and for simplicity of the requirement
+                switch (keyInfo.Key)
                 {
-                    break;
+                    case ConsoleKey.UpArrow:
+                        board.MoveUp();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        board.MoveDown();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        board.MoveLeft();
+                        break;
+                    case ConsoleKey.RightArrow:
+                        board.MoveRight();
+                        break;
+                    case ConsoleKey.Q:
+                        break;
                 }
-                else
-                {
-                    UpdatePosition(keyInfo);
-                }
-
                 DisplayCurrentStatus();
             }
 
             DisplayFinalScore(column);
         }
 
+        /// <summary>
+        /// Display introductry instruction to the user.
+        /// </summary>
+        /// <param name="startingPositionName"></param>
         private void DisplayInstructions(string startingPositionName)
         {
-            outputManager.DisplayMessage("Press arrow keys to move (Press 'q' to quit):");
+            outputManager.DisplayMessage(Messages.GameInstructions);
             outputManager.DisplayMessage($"You are currently at position: {startingPositionName}");
         }
 
+        /// <summary>
+        /// Display the current in-play positions, lives remaining and moves so far taken.
+        /// </summary>
         private void DisplayCurrentStatus()
         {
-            var newposition = board.Position(row, column);
+            var newposition = board.CurrentPosition();
             bool mineHit = CheckMineHit(newposition);
             outputManager.DisplayPosition(newposition, player.LivesRemaining, player.TotalMovesTaken, mineHit);
         }
 
+        /// <summary>
+        /// Updates the appropriate counters and resulting position 
+        /// based on input from the user (aka player).
+        /// </summary>
+        /// <param name="keyInfo"></param>
         private void UpdatePosition(ConsoleKeyInfo keyInfo)
         {
-            switch (keyInfo.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (board.IsWithinBounds(row + 1, column))
-                        row++;
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (board.IsWithinBounds(row - 1, column))
-                        row--;
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (board.IsWithinBounds(row, column - 1))
-                        column--;
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (board.IsWithinBounds(row, column + 1))
-                        column++;
-                    break;
-            }
+
         }
 
+        /// <summary>
+        /// Check and track if the resulting new position contains a mine.
+        /// </summary>
+        /// <param name="newPosition"></param>
+        /// <returns></returns>
         private bool CheckMineHit(string newPosition)
         {
-            if (mine.IsMine(newPosition))
+            if (board.Mines.IsMine(newPosition))
             {
                 player.DecrementLives();
                 return true;
             }
             return false;
-        }        
+        }
 
+        /// <summary>
+        /// Displays the end of game data and result.
+        /// </summary>
+        /// <param name="filePosition"></param>
         private void DisplayFinalScore(int filePosition)
         {
-            outputManager.DisplayMessage("");
-            outputManager.DisplayMessage("");
+            outputManager.DisplayMessage(string.Empty);
+            outputManager.DisplayMessage(string.Empty);
 
-            if (player.LivesRemaining > 0 && filePosition == board.Size)
+            if (player.LivesRemaining > 0 && board.IsEndPosition)
             {
-                outputManager.DisplayMessage($"Congratulations! Final score is Number of moves taken: {player.TotalMovesTaken}");
+                outputManager.DisplayMessage($"{Messages.OfCongratulations} {player.TotalMovesTaken}");
             }
             else
             {
-                outputManager.DisplayMessage($"Sorry, you did not reach the other side of the board.");
+                outputManager.DisplayMessage(Messages.OfCommiseration);
             }
-            outputManager.DisplayMessage("");
-
+            outputManager.DisplayMessage(string.Empty);
         }
     }
 }

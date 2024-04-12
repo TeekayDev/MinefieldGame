@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MinefieldGame.Interfaces;
+using System;
 
-namespace MinefieldGame.Core
+
+namespace MinefieldGame.Domain
 {
     /// <summary>
     /// Displays _positions and generic messages to an screen

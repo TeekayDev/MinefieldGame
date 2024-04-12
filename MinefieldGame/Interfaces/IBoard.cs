@@ -1,4 +1,4 @@
-﻿namespace MinefieldGame.Domain
+﻿namespace MinefieldGame.Interfaces
 {
     public interface IBoard
     {

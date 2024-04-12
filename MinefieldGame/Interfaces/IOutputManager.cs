@@ -1,4 +1,4 @@
-﻿namespace MinefieldGame.Core
+﻿namespace MinefieldGame.Interfaces
 {
     /// <summary>
     /// Contract for displaying _positions and generic messages to an output medium

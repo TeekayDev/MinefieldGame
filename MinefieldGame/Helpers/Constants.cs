@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinefieldGame.Domain
+namespace MinefieldGame.Helpers
 {
     /// <summary>
     /// This constants could alternatively (are idealy) supplied via a config file.
@@ -12,7 +12,7 @@ namespace MinefieldGame.Domain
     public static class Constants
     {
         /// <summary>
-        /// The size of the board (number of squares required on one side)
+        /// The size of the board (number of squares required for one side)
         /// </summary>
         public static int BoardSize = 8;
 
@@ -25,5 +25,10 @@ namespace MinefieldGame.Domain
         /// Number Of Mines wanted
         /// </summary>
         public static int NumberOfMines = 4;
+
+        /// <summary>
+        /// ASCII code base before upper case alphabets starts
+        /// </summary>
+        public static int ASCIIcodePrefix = 64;
     }
 }
