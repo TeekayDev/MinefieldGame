@@ -8,25 +8,32 @@ using System.Linq;
 
 namespace MinefieldGame.Domain
 {
-    public class ChessBoardForMineSweeper : Board, IChessBoardForMineSweeper
+    public class ChessBoardForMineSweeper : GameBoard
     {
-        private readonly Mine _mine;
+        private readonly List<string> _minePositions;
 
-        public ChessBoardForMineSweeper(Mine mine)
+        public ChessBoardForMineSweeper(int numberOfMines)
         {
             // Generate a random position on the left side of the board.
-            column = 1;
-            row = new Random().Next(1, Size);
+            _column = 1;
+            _row = new Random().Next(1, Size);
 
-            // Generate other a random position for mines.
-            _mine = mine;
-            _mine.Positions = GenerateRandomMinePosition(mine.Quantity);
+            // Generate random position for mines.
+            _minePositions = GenerateRandomMinePosition(numberOfMines);
+        }       
+
+        public bool IsEndPosition { get { return _column == _boardSize; } }
+
+        public bool IsMine(string position)
+        {
+            if (_minePositions.Contains(position))
+            {
+                _minePositions.RemoveAt(_minePositions.IndexOf(position));
+                return true;
+            }
+            
+            return false;
         }
-
-        public Mine Mines { get { return _mine; } }
-
-        public bool IsEndPosition { get { return column == _boardSize; } }
-
 
         /// <summary>
         /// Generate a collection of random positions on the board
@@ -41,7 +48,7 @@ namespace MinefieldGame.Domain
 
             for (int i = 0; i < quantity; i++)
             {
-                string newNo = string.Empty;
+                string newNo;
                 do
                 {
                     newNo = GetPosition(new Random().Next(1, Size), new Random().Next(1, Size));
@@ -52,6 +59,6 @@ namespace MinefieldGame.Domain
             }
 
             return result;
-        }
+        }        
     }
 }

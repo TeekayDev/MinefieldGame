@@ -18,7 +18,9 @@ namespace MinefieldGame.Domain
         }
 
         public int LivesRemaining => totalLives;
+
         public int TotalMovesTaken => totalMoves;
+
         public void DecrementLives()
         {
             totalLives--;

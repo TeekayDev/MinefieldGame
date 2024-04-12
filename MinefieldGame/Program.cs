@@ -19,10 +19,9 @@ namespace MinefieldGame
             /// or passed in as input paramerets.
             try
             {
-                var mine = new Mine(Constants.NumberOfMines);
                 var outputManager = new OutputManager();
                 var player = new Player(Constants.NumberOfLives);
-                var board = new ChessBoardForMineSweeper(mine);
+                var board = new ChessBoardForMineSweeper(Constants.NumberOfMines);
 
                 var gameEngine = new GameEngine(board, player, outputManager);
                 gameEngine.Run();

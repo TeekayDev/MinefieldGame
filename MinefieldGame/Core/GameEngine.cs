@@ -12,11 +12,9 @@ namespace MinefieldGame.Core
     /// </summary>
     public class GameEngine : IGameEngine
     {
-        private int column;
-
-        private readonly ChessBoardForMineSweeper board;
         private readonly Player player;
         private readonly OutputManager outputManager;
+        private readonly ChessBoardForMineSweeper board;        
 
         public GameEngine(ChessBoardForMineSweeper board, Player player, OutputManager outputManager)
         {
@@ -34,33 +32,50 @@ namespace MinefieldGame.Core
 
             while (player.LivesRemaining > 0 && !board.IsEndPosition)
             {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                player.IncrementMoves();
+                var keyInfo = Console.ReadKey(true);
+                if (keyInfo.Key == ConsoleKey.Escape)
+                    break;
 
-                // A factory approach would be more ideal for expansion
-                // this is a quick implementation due to time constraints
-                // and for simplicity of the requirement
-                switch (keyInfo.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        board.MoveUp();
-                        break;
-                    case ConsoleKey.DownArrow:
-                        board.MoveDown();
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        board.MoveLeft();
-                        break;
-                    case ConsoleKey.RightArrow:
-                        board.MoveRight();
-                        break;
-                    case ConsoleKey.Q:
-                        break;
-                }
+                if (UpdateBoardPosition(keyInfo))
+                    player.IncrementMoves();
+
                 DisplayCurrentStatus();
             }
+            
+            DisplayFinalScore();
+        }
 
-            DisplayFinalScore(column);
+        /// <summary>
+        /// Sends the selected input key to the board for updating
+        /// </summary>
+        /// <param name="keyInfo"></param>
+        private bool UpdateBoardPosition(ConsoleKeyInfo keyInfo)
+        {
+            // A factory approach would be more ideal for expansion
+            // this is a quick implementation due to time constraints
+            // and for simplicity of the requirement
+
+            var previousPosition = board.CurrentPosition();
+
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    board.MoveUp();
+                    break;
+                case ConsoleKey.DownArrow:
+                    board.MoveDown();
+                    break;
+                case ConsoleKey.LeftArrow:
+                    board.MoveLeft();
+                    break;
+                case ConsoleKey.RightArrow:
+                    board.MoveRight();
+                    break;
+                case ConsoleKey.Q:
+                    break;
+            }
+
+            return !previousPosition.Equals(board.CurrentPosition());
         }
 
         /// <summary>
@@ -84,23 +99,13 @@ namespace MinefieldGame.Core
         }
 
         /// <summary>
-        /// Updates the appropriate counters and resulting position 
-        /// based on input from the user (aka player).
-        /// </summary>
-        /// <param name="keyInfo"></param>
-        private void UpdatePosition(ConsoleKeyInfo keyInfo)
-        {
-
-        }
-
-        /// <summary>
         /// Check and track if the resulting new position contains a mine.
         /// </summary>
-        /// <param name="newPosition"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        private bool CheckMineHit(string newPosition)
+        private bool CheckMineHit(string position)
         {
-            if (board.Mines.IsMine(newPosition))
+            if (board.IsMine(position))
             {
                 player.DecrementLives();
                 return true;
@@ -112,7 +117,7 @@ namespace MinefieldGame.Core
         /// Displays the end of game data and result.
         /// </summary>
         /// <param name="filePosition"></param>
-        private void DisplayFinalScore(int filePosition)
+        private void DisplayFinalScore()
         {
             outputManager.DisplayMessage(string.Empty);
             outputManager.DisplayMessage(string.Empty);
