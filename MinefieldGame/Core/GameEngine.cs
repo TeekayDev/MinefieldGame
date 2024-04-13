@@ -1,136 +1,116 @@
 ﻿using MinefieldGame.Domain;
-using MinefieldGame.Helpers;
-using MinefieldGame.Interfaces;
-using System;
-
 
 namespace MinefieldGame.Core
 {
+    using MinefieldGame.Interfaces;
+    using System;
 
     /// <summary>
-    /// This is the core of the application which runs the game
+    /// Represents the game engine controlling player movements and game state.
     /// </summary>
     public class GameEngine : IGameEngine
     {
-        private readonly Player player;
-        private readonly OutputManager outputManager;
-        private readonly ChessBoardForMineSweeper board;        
+        private readonly Player _player;
+        private readonly MinefieldBoard _board;
 
-        public GameEngine(ChessBoardForMineSweeper board, Player player, OutputManager outputManager)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameEngine"/> class.
+        /// </summary>
+        /// <param name="board">The minefield board.</param>
+        /// <param name="player">The player.</param>
+        public GameEngine(MinefieldBoard board, Player player)
         {
-            this.board = board;
-            this.player = player;
-            this.outputManager = outputManager;
+            _board = board ?? throw new ArgumentNullException(nameof(board));
+            _player = player ?? throw new ArgumentNullException(nameof(player));
         }
 
         /// <summary>
-        /// Run the game engine
+        /// Gets a value indicating whether the game is still in play.
         /// </summary>
-        public void Run()
-        {
-            DisplayInstructions(board.CurrentPosition());
-
-            while (player.LivesRemaining > 0 && !board.IsEndPosition)
-            {
-                var keyInfo = Console.ReadKey(true);
-                if (keyInfo.Key == ConsoleKey.Escape)
-                    break;
-
-                if (UpdateBoardPosition(keyInfo))
-                    player.IncrementMoves();
-
-                DisplayCurrentStatus();
-            }
-            
-            DisplayFinalScore();
-        }
+        public bool StillInPlay => _player.LivesRemaining > 0 && !_board.IsEndPosition;
 
         /// <summary>
-        /// Sends the selected input key to the board for updating
+        /// Moves the player based on the input key.
         /// </summary>
-        /// <param name="keyInfo"></param>
-        private bool UpdateBoardPosition(ConsoleKeyInfo keyInfo)
+        /// <param name="keyInfo">The input key.</param>
+        public void Move(ConsoleKeyInfo keyInfo)
         {
-            // A factory approach would be more ideal for expansion
-            // this is a quick implementation due to time constraints
-            // and for simplicity of the requirement
-
-            var previousPosition = board.CurrentPosition();
+            var previousPosition = _board.CurrentPosition();
 
             switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
-                    board.MoveUp();
+                    _board.MoveUp();
                     break;
                 case ConsoleKey.DownArrow:
-                    board.MoveDown();
+                    _board.MoveDown();
                     break;
                 case ConsoleKey.LeftArrow:
-                    board.MoveLeft();
+                    _board.MoveLeft();
                     break;
                 case ConsoleKey.RightArrow:
-                    board.MoveRight();
+                    _board.MoveRight();
                     break;
                 case ConsoleKey.Q:
                     break;
             }
 
-            return !previousPosition.Equals(board.CurrentPosition());
+            if (!previousPosition.Equals(_board.CurrentPosition()))
+            {
+                _player.IncrementMoves();
+            }
         }
 
         /// <summary>
-        /// Display introductry instruction to the user.
+        /// Gets the current position of the player.
         /// </summary>
-        /// <param name="startingPositionName"></param>
-        private void DisplayInstructions(string startingPositionName)
-        {
-            outputManager.DisplayMessage(Messages.GameInstructions);
-            outputManager.DisplayMessage($"You are currently at position: {startingPositionName}");
-        }
+        public string CurrentPosition => _board.CurrentPosition();
 
         /// <summary>
-        /// Display the current in-play positions, lives remaining and moves so far taken.
+        /// Gets a value indicating whether the player has hit a mine.
         /// </summary>
-        private void DisplayCurrentStatus()
-        {
-            var newposition = board.CurrentPosition();
-            bool mineHit = CheckMineHit(newposition);
-            outputManager.DisplayPosition(newposition, player.LivesRemaining, player.TotalMovesTaken, mineHit);
-        }
+        public bool IsMineHit => CheckMineHit(_board.CurrentPosition());
 
         /// <summary>
-        /// Check and track if the resulting new position contains a mine.
+        /// Gets the remaining lives of the player.
         /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
+        public int LivesRemaining => _player.LivesRemaining;
+
+        /// <summary>
+        /// Gets the total number of moves taken by the player.
+        /// </summary>
+        public int TotalMovesTaken => _player.TotalMovesTaken;
+
+        /// <summary>
+        /// Gets a value indicating whether the game is completed.
+        /// </summary>
+        public bool Completed => _player.LivesRemaining > 0 && _board.IsEndPosition;
+
+        /// <summary>
+        /// Checks if the resulting new position contains a mine.
+        /// </summary>
+        /// <param name="position">The position to check.</param>
+        /// <returns>True if the position contains a mine, otherwise false.</returns>
         private bool CheckMineHit(string position)
         {
-            if (board.IsMine(position))
+            if (_board.IsMine(position))
             {
-                player.DecrementLives();
+                _player.DecrementLives();
                 return true;
             }
             return false;
         }
 
         /// <summary>
-        /// Displays the end of game data and result.
+        /// Checks if the player input is valid.
         /// </summary>
-        /// <param name="filePosition"></param>
-        private void DisplayFinalScore()
+        /// <param name="keyInfo">The input key.</param>
+        /// <returns>True if the game is still in play, otherwise false.</returns>
+        public bool PlayerInput(ConsoleKeyInfo keyInfo)
         {
-            outputManager.DisplayMessage(string.Empty);
-            outputManager.DisplayMessage(string.Empty);
-
-            if (player.LivesRemaining > 0 && board.IsEndPosition)
-            {
-                outputManager.DisplayMessage($"{Messages.OfCongratulations} {player.TotalMovesTaken}");
-            }
-            else
-            {
-                outputManager.DisplayMessage(Messages.OfCommiseration);
-            }
-            outputManager.DisplayMessage(string.Empty);
+            return StillInPlay;
         }
     }
+
+
 }

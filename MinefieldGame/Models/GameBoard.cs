@@ -5,17 +5,17 @@ using MinefieldGame.Interfaces;
 namespace MinefieldGame.Domain
 {
     /// <summary>
-    /// Represents a game board with rows and columns.
+    /// Represents a game board.
     /// </summary>
     public abstract class GameBoard : IGameBoard
     {
         /// <summary>
-        /// The current _row position.
+        /// The current row position.
         /// </summary>
         protected int _row;
 
         /// <summary>
-        /// The current _column position.
+        /// The current column position.
         /// </summary>
         protected int _column;
 
@@ -23,6 +23,17 @@ namespace MinefieldGame.Domain
         /// The size of the board.
         /// </summary>
         protected readonly int _boardSize;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameBoard"/> class with the specified board size.
+        /// </summary>
+        /// <param name="boardSize">The size of the board.</param>
+        protected GameBoard(int boardSize)
+        {
+            _row = 1;
+            _column = 1;
+            _boardSize = boardSize;
+        }
 
         /// <summary>
         /// Moves the position up one step if within bounds.
@@ -68,8 +79,8 @@ namespace MinefieldGame.Domain
         /// <summary>
         /// Checks if the given position is within the board boundaries.
         /// </summary>
-        /// <param name="newrow">The _row of the position.</param>
-        /// <param name="newcol">The _column of the position.</param>
+        /// <param name="newrow">The row of the position.</param>
+        /// <param name="newcol">The column of the position.</param>
         /// <returns>True if within bounds, otherwise false.</returns>
         public bool IsWithinBounds(int newrow, int newcol)
         {
@@ -96,5 +107,6 @@ namespace MinefieldGame.Domain
             return $"{(char)(file + Constants.ASCIIcodePrefix)}{rank}";
         }
     }
+
 
 }

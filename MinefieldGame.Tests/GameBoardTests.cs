@@ -1,4 +1,7 @@
 ﻿using MinefieldGame.Domain;
+using MinefieldGame.Helpers;
+using System.Data.Common;
+using System.Drawing;
 
 namespace MinefieldGame.Tests
 {
@@ -189,6 +192,10 @@ namespace MinefieldGame.Tests
     /// </summary>
     public class TestGameBoard : GameBoard
     {
+        public TestGameBoard() : base(Constants.BoardSize)
+        {
+            
+        }
         public int GetRow() => _row;
         public int GetColumn() => _column;
         public void SetPosition(int newRow, int newColumn)

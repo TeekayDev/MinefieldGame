@@ -13,5 +13,4 @@
         string CurrentPosition();
         string GetPosition(int rank, int file);
     }
-
 }

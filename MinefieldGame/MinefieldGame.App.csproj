@@ -46,9 +46,10 @@
     <Compile Include="Core\GameEngine.cs" />
     <Compile Include="Helpers\Messages.cs" />
     <Compile Include="Interfaces\IGameEngine.cs" />
+    <Compile Include="Interfaces\IMinefieldBoard.cs" />
     <Compile Include="Interfaces\IOutputManager.cs" />
     <Compile Include="Domain\OutputManager.cs" />
-    <Compile Include="Domain\ChessBoardForMineSweeper.cs" />
+    <Compile Include="Domain\MinefieldBoard.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
     <Compile Include="Domain\Player.cs" />

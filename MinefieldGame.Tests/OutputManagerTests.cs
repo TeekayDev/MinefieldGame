@@ -30,8 +30,8 @@ namespace MinefieldGame.Tests
         }
 
         [Theory]
-        [InlineData("A1", 2, 5, false, "A1  |  Lives Remaining:2  |  Total Moves:5.")]
-        [InlineData("B2", 1, 8, true, "B2  |  Lives Remaining:1  |  Total Moves:8.   *Boom!*")]
+        [InlineData("A1", 2, 5, false, "A1  |  Lives Remaining: 2  |  Total Moves: 5.")]
+        [InlineData("B2", 1, 8, true, "B2  |  Lives Remaining: 1  |  Total Moves: 8.   *Boom!*")]
         public void DisplayPosition_Displays_Correct_Format(string positionName, int livesRemaining, int totalMovesTaken, bool mineHit, string expectedOutput)
         {
             // Arrange
