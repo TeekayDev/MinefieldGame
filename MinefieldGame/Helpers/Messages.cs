@@ -15,7 +15,7 @@ namespace MinefieldGame.Helpers
         /// <summary>
         /// The size of the board (number of squares required for one side)
         /// </summary>
-        public static string GameInstructions = "Press arrow keys to move (Press 'q' to quit):";
+        public static string GameInstructions = "Press arrow keys to move (Hit <Esc> to exit):";
 
         /// <summary>
         /// The number of lives 

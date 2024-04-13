@@ -44,24 +44,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\GameEngine.cs" />
-    <Compile Include="Interfaces\IChessBoardForMineSweeper.cs" />
     <Compile Include="Helpers\Messages.cs" />
     <Compile Include="Interfaces\IGameEngine.cs" />
-    <Compile Include="Interfaces\IMine.cs" />
-    <Compile Include="Interfaces\IBoard.cs" />
+    <Compile Include="Interfaces\IMinefieldBoard.cs" />
     <Compile Include="Interfaces\IOutputManager.cs" />
     <Compile Include="Domain\OutputManager.cs" />
-    <Compile Include="Domain\ChessBoardForMineSweeper.cs" />
+    <Compile Include="Domain\MinefieldBoard.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
-    <Compile Include="Domain\Mine.cs" />
     <Compile Include="Domain\Player.cs" />
-    <Compile Include="Models\Board.cs" />
+    <Compile Include="Models\GameBoard.cs" />
+    <Compile Include="Interfaces\IGameBoard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
